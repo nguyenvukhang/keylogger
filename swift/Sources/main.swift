@@ -1,5 +1,14 @@
 import Cocoa
 
+extension NSScreen {
+    /**
+     * Gets the screen that contains the user's cursor.
+     */
+    static func current() -> NSScreen {
+        NSScreen.screens.first { s in NSPointInRect(NSEvent.mouseLocation, s.frame) }!
+    }
+}
+
 var lastFlags: CGEventFlags = .init()
 
 func handleKeyDown() {}
@@ -57,4 +66,7 @@ CFRunLoopAddSource(CFRunLoopGetCurrent(),
                    runLoopSource,
                    .commonModes)
 CGEvent.tapEnable(tap: eventTap, enable: true)
-CFRunLoopRun()
+print(NSScreen.current())
+// ObjCWacom.setScreenMapArea(NSScreen.current().frame, tabletId: lastUsedTablet)
+
+// CFRunLoopRun()

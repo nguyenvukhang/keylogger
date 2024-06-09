@@ -5,6 +5,8 @@ import PackageDescription
 
 let package = Package(
     name: "heliumd",
+    products: [],
     targets: [
         .executableTarget(name: "heliumd")
+        // .target(name: "ObjCWacom", targets: ["ObjCWacom"])
     ])
