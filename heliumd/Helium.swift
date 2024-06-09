@@ -63,7 +63,7 @@ class Helium {
     }
 
     /// Make the tablet cover the area around the cursor's current location.
-    func setPrecisionMode() {
+    private func setPrecisionMode() {
         let frame = NSScreen.current().frame
         let area = frame.precisionModeFrame(at: NSEvent.mouseLocation, scale: scale, aspectRatio: aspectRatio)
         setTabletMapArea(to: area)
@@ -71,7 +71,7 @@ class Helium {
     }
 
     /// Make the tablet cover the whole screen that contains the user's cursor.
-    func setFullScreenMode() {
+    private func setFullScreenMode() {
         var frame = NSScreen.current().frame
         if fullscreenKeepAspectRatio {
             frame = frame.centeredSubRect(withAspectRatio: aspectRatio)
@@ -80,22 +80,12 @@ class Helium {
         overlay.fullscreen(to: &frame, lineColor: lineColor, lineWidth: lineWidth, cornerLength: cornerLength)
     }
 
-    /// Rehydrate running state after settings have changed
-    func previewOverlay() {
-        let prevMode = mode
-        setPrecisionMode()
-        display()
-        mode = prevMode
-    }
-
     /// Move overlay to cover target NSRect
     private func moveOverlay(to rect: NSRect) {
         overlay.set(to: rect, lineColor: lineColor, lineWidth: lineWidth, cornerLength: cornerLength)
     }
 
     /// Sends a WacomTabletDriver API call to override tablet map area.
-    /// Also makes the overlay follow wherever it goes.
-
     private func setTabletMapArea(to rect: NSRect) {
         ObjCWacom.setScreenMapArea(rect, tabletId: lastUsedTablet)
     }

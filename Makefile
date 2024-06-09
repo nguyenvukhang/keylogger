@@ -1,4 +1,7 @@
-dev:
+build:
+	swift build
+
+run:
 	swift run
 
 release:
