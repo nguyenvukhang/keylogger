@@ -14,13 +14,6 @@ FILE *logfile = NULL;
 const char *logfileLocation = "/dev/stdout";
 
 CGEventRef CGEventCallback(CGEventTapProxy, CGEventType, CGEventRef, void *);
-const char *convertKeyCode(int, bool, bool);
-
-struct KeyState {
-  bool cmd;
-  bool opt;
-  bool shift;
-  bool ctrl;
-} global_key_state;
+bool isKeyDown(CGEventType, CGEventFlags, CGKeyCode);
 
 #endif
