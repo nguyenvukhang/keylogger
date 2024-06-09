@@ -6,20 +6,23 @@ import PackageDescription
 let package = Package(
     name: "heliumd",
     products: [
+        .executable(
+            name: "heliumd",
+            targets: ["heliumd"]),
         .library(
             name: "ObjCWacom",
             targets: ["ObjCWacom"])
     ],
     targets: [
-        .target(name: "ObjCWacom",
-                dependencies: [],
-                path: "Sources/Wacom",
-                exclude: [],
-                sources: ["."],
-                publicHeadersPath: "include")
+        .executableTarget(
+            name: "heliumd",
+            dependencies: ["ObjCWacom"],
+            path: "Sources/heliumd"),
+        .target(
+            name: "ObjCWacom",
+            dependencies: [],
+            path: "Sources/Wacom",
+            exclude: [],
+            sources: ["."],
+            publicHeadersPath: "include")
     ])
-
-// .executableTarget(name: "heliumd", dependencies: ["ObjCWacom"], path: "Sources"),
-// .executable(
-//     name: "heliumd",
-//     targets: ["heliumd"])
