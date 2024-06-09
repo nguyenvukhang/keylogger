@@ -7,6 +7,9 @@ INSTALLDIR=/usr/local/bin
 PLISTDIR=/Library/LaunchDaemons
 PLISTFULL=$(PLISTDIR)/$(PLIST)
 
+dev: all
+	./heliumd	
+
 all: $(SOURCES)
 	$(CC) $(SOURCES) $(CFLAGS) -o $(EXECUTABLE)
 
