@@ -8,14 +8,12 @@
 import Cocoa
 
 extension NSBezierPath {
-    /**
-     * take a (bottom-left) path and add it 4 times in all 4 flipped states
-     *                        ┌─       ─┐
-     *
-     *      · (0,0)       →        · (0,0)
-     *
-     * └─                     └─       ─┘
-     */
+    /// take a (bottom-left) path and add it 4 times in all 4 flipped states
+    ///                        ┌─       ─┐
+    ///
+    ///      · (0,0)       →        · (0,0)
+    ///
+    /// └─                     └─       ─┘
     func addAll4Orientations(path u: NSBezierPath) {
         let v = u.copy() as! NSBezierPath
         v.transform(using: AffineTransform(scaleByX: -1, byY: 1))
@@ -25,9 +23,7 @@ extension NSBezierPath {
         append(u)
     }
 
-    /**
-     * Draws 4 Ls at each corner of the rect.
-     */
+    /// Draws 4 Ls at each corner of the rect.
     func drawBounds(rect: NSRect, length: Double, margin: Double) {
         // px that the drawing will exceed the frame
         let exceed = lineWidth / 2
@@ -60,30 +56,22 @@ class Overlay: NSWindow {
         alphaValue = 0
     }
 
-    /**
-     * Shows the overlay window (instant).
-     */
+    /// Shows the overlay window (instant).
     func show() {
         alphaValue = 1
     }
 
-    /**
-     * Hides the overlay window with a fade.
-     */
+    /// Hides the overlay window with a fade.
     func hide() {
         animateAlpha(to: 0, over: 1.0)
     }
 
-    /**
-     * Shows then hides the overlay window.
-     */
+    /// Shows then hides the overlay window.
     func flash() {
         show(); hide()
     }
 
-    /**
-     * Sets all important parameters of the overlay
-     */
+    /// Sets all important parameters of the overlay
     func set(to rect: NSRect, lineColor: NSColor, lineWidth: Double, cornerLength: Double) {
         var target = rect
         target.origin.x -= margin
@@ -118,7 +106,7 @@ class Overlay: NSWindow {
         backgroundColor = NSColor(patternImage: bg)
     }
 
-    // debugging function to add real bounds to the actual NSWindow boundary rect
+    /// debugging function to add real bounds to the actual NSWindow boundary rect
     func addWindowBounds(color: NSColor) {
         let bz = NSBezierPath(rect: NSRect(origin: NSZeroPoint, size: frame.size))
         bz.lineWidth = 1
@@ -126,9 +114,7 @@ class Overlay: NSWindow {
         bz.stroke()
     }
 
-    /**
-     * Draws the 4 Ls around the window.
-     */
+    /// Draws the 4 Ls around the window.
     func drawBounds(lineColor: NSColor, lineWidth: Double, cornerLength: Double) {
         let bg = NSImage(size: frame.size)
         bg.lockFocus()
@@ -142,10 +128,8 @@ class Overlay: NSWindow {
         backgroundColor = NSColor(patternImage: bg)
     }
 
-    /**
-     * Changes transparency of the overlay window, with an endpoint of `alpha`
-     * and over a time interval `interval`.
-     */
+    /// Changes transparency of the overlay window, with an endpoint of `alpha`
+    /// and over a time interval `interval`.
     private func animateAlpha(to alpha: Double, over interval: TimeInterval) {
         NSAnimationContext.beginGrouping()
         NSAnimationContext.current.duration = interval
