@@ -5,8 +5,21 @@ import PackageDescription
 
 let package = Package(
     name: "heliumd",
-    products: [],
+    products: [
+        .library(
+            name: "ObjCWacom",
+            targets: ["ObjCWacom"])
+    ],
     targets: [
-        .executableTarget(name: "heliumd")
-        // .target(name: "ObjCWacom", targets: ["ObjCWacom"])
+        .target(name: "ObjCWacom",
+                dependencies: [],
+                path: "Sources/Wacom",
+                exclude: [],
+                sources: ["."],
+                publicHeadersPath: "include")
     ])
+
+// .executableTarget(name: "heliumd", dependencies: ["ObjCWacom"], path: "Sources"),
+// .executable(
+//     name: "heliumd",
+//     targets: ["heliumd"])
