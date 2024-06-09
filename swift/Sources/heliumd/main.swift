@@ -1,4 +1,5 @@
 import Cocoa
+import ObjCWacom
 
 extension NSScreen {
     /**
@@ -43,6 +44,8 @@ func eventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, re
         } else {
             print("Precision Mode")
         }
+    }
+    if keyCode == 0x08, event.flags.contains(.maskControl) {
         exit(0)
     }
     return Unmanaged.passUnretained(event)
@@ -59,14 +62,21 @@ guard let eventTap = CGEvent.tapCreate(tap: .cghidEventTap,
     exit(1)
 }
 
-let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault,
-                                                  eventTap,
-                                                  0)
-CFRunLoopAddSource(CFRunLoopGetCurrent(),
-                   runLoopSource,
-                   .commonModes)
-CGEvent.tapEnable(tap: eventTap, enable: true)
-print(NSScreen.current())
-// ObjCWacom.setScreenMapArea(NSScreen.current().frame, tabletId: lastUsedTablet)
+func runLoop() {
+    let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault,
+                                                      eventTap,
+                                                      0)
+    CFRunLoopAddSource(CFRunLoopGetCurrent(),
+                       runLoopSource,
+                       .commonModes)
+    CGEvent.tapEnable(tap: eventTap, enable: true)
+    CFRunLoopRun()
+}
 
-// CFRunLoopRun()
+runLoop()
+
+print(NSScreen.current())
+var rect = NSScreen.current().frame
+rect.size.width /= 2
+rect.size.height /= 2
+ObjCWacom.setScreenMapArea(rect, tabletId: 0)

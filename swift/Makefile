@@ -1,6 +1,5 @@
 dev:
-	rm -rf .build
-	swift build
+	swift run
 
 release:
 	swift build --configuration release
