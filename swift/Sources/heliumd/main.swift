@@ -35,6 +35,10 @@ func eventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, re
     let keyCode = UInt16(event.getIntegerValueField(.keyboardEventKeycode))
     let down = isKeyDown(type, event, keyCode)
     lastFlags = event.flags
+    if type == .tabletProximity {
+        handleProximityEvent(event)
+        return Unmanaged.passUnretained(event)
+    }
     if !down { return Unmanaged.passUnretained(event) }
 
     // this is when keyCode == 't' in US ANSI
@@ -51,7 +55,9 @@ func eventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, re
     return Unmanaged.passUnretained(event)
 }
 
-let eventMask = (1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.flagsChanged.rawValue)
+let eventMask = (1 << CGEventType.keyDown.rawValue)
+    | (1 << CGEventType.flagsChanged.rawValue)
+    | (1 << CGEventType.tabletProximity.rawValue)
 guard let eventTap = CGEvent.tapCreate(tap: .cghidEventTap,
                                        place: .headInsertEventTap,
                                        options: .defaultTap,
@@ -60,6 +66,11 @@ guard let eventTap = CGEvent.tapCreate(tap: .cghidEventTap,
                                        userInfo: nil) else {
     print("Failed to create event tap")
     exit(1)
+}
+
+func handleProximityEvent(_ event: CGEvent) {
+    let isEntering = event.getIntegerValueField(.tabletProximityEventEnterProximity) != 0
+    print(isEntering ? "TABLET ENTER" : "TABLET EXIT")
 }
 
 func runLoop() {
