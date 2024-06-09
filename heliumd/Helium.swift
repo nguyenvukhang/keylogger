@@ -24,7 +24,6 @@ class Helium {
     var penInProximity: Bool = false {
         didSet {
             if penInProximity { showOverlay() } else { hideOverlay() }
-            print(penInProximity)
         }
     }
 

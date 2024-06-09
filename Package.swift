@@ -17,12 +17,12 @@ let package = Package(
         .executableTarget(
             name: "heliumd",
             dependencies: ["ObjCWacom"],
-            path: "Sources/heliumd"),
+            path: "heliumd"),
         .target(
             name: "ObjCWacom",
             dependencies: [],
-            path: "Sources/Wacom",
+            path: "Wacom",
             exclude: [],
             sources: ["."],
-            publicHeadersPath: "include")
+            publicHeadersPath: ".")
     ])
