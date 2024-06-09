@@ -3,6 +3,11 @@ import ObjCWacom
 
 var lastFlags: CGEventFlags = .init()
 var lastUsedTablet: Int32 = 0
+var scale = 0.5
+var aspectRatio = 16.0 / 10.0
+var lineWidth = 5.0
+var lineColor = NSColor(red: 0.925, green: 0.282, blue: 0.600, alpha: 0.5)
+var cornerLength = 50.0
 
 func isKeyDown(_ type: CGEventType, _ event: CGEvent, _ keyCode: UInt16) -> Bool {
     if type == .keyDown {
@@ -71,16 +76,26 @@ func setPrecisionMode() {
     let frame = NSScreen.current().frame
     let area = frame.precisionModeFrame(
         at: NSEvent.mouseLocation,
-        scale: 0.5,
-        aspectRatio: 16 / 10)
+        scale: scale,
+        aspectRatio: aspectRatio)
     setTabletMapArea(to: area)
-    // moveOverlay(to: area)
+    moveOverlay(to: area)
+    overlay.show()
+}
+
+/** Move overlay to cover target NSRect */
+func moveOverlay(to rect: NSRect) {
+    overlay.set(to: rect, lineColor: lineColor, lineWidth: lineWidth, cornerLength: cornerLength)
 }
 
 /** Sends a WacomTabletDriver API call to override tablet map area. */
 func setTabletMapArea(to rect: NSRect) {
     ObjCWacom.setScreenMapArea(rect, tabletId: lastUsedTablet)
 }
+
+let overlay = Overlay()
+let overlayWindowController = NSWindowController(window: overlay)
+overlayWindowController.showWindow(overlay)
 
 let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault,
                                                   eventTap,
