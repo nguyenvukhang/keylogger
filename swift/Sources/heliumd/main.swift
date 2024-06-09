@@ -1,7 +1,7 @@
 import Cocoa
 import ObjCWacom
 
-let overlay = Overlay()
+let helium = Helium()
 var lastUsedTablet: Int32 = 0
 var scale = 0.5
 var aspectRatio = 16.0 / 10.0
@@ -11,7 +11,8 @@ var cornerLength = 50.0
 var fullscreenKeepAspectRatio = false
 
 func handleProximityEvent(_ event: CGEvent) {
-    // let isEntering = event.getIntegerValueField(.tabletProximityEventEnterProximity) != 0
+    let isEnteringProximity = event.getIntegerValueField(.tabletProximityEventEnterProximity) != 0
+    helium.penInProximity = isEnteringProximity
     lastUsedTablet = Int32(event.getIntegerValueField(.tabletProximityEventSystemTabletID))
 }
 
@@ -21,25 +22,20 @@ func handleKeyDownEvent(_ event: CGEvent) {
     // this is when keyCode == 't' in US ANSI
     if keyCode == 17, flags.contains([.maskControl, .maskAlternate, .maskCommand]) {
         if flags.contains(.maskShift) {
-            print("Fullscreen Mode")
+            helium.mode = .fullscreen
+            helium.display()
         } else {
-            print("Precision Mode")
-            setPrecisionMode()
+            helium.mode = .precision
+            helium.display()
         }
     }
-    if keyCode == 0x08, flags.contains(.maskControl) {
-        exit(0)
-    }
-}
-
-/// Move overlay to cover target NSRect
-func moveOverlay(to rect: NSRect) {
-    overlay.set(to: rect, lineColor: lineColor, lineWidth: lineWidth, cornerLength: cornerLength)
+    // Ctrl+C kills the program
+    if keyCode == 0x08, flags.contains(.maskControl) { exit(0) }
 }
 
 func main() {
-    let overlayWindowController = NSWindowController(window: overlay)
-    overlayWindowController.showWindow(overlay)
+    let overlayWindowController = NSWindowController(window: helium.overlay)
+    overlayWindowController.showWindow(helium.overlay)
     startKeystrokeMonitor()
 }
 

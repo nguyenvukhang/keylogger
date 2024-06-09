@@ -1,14 +1,20 @@
 import Cocoa
 
-func eventCallback(proxy _: CGEventTapProxy, type: CGEventType, event: CGEvent, refcon _: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
+func eventCallback(_: CGEventTapProxy,
+                   type: CGEventType,
+                   event: CGEvent,
+                   _: UnsafeMutableRawPointer?) -> Unmanaged<CGEvent>? {
     switch type {
     case .tabletProximity: handleProximityEvent(event)
     case .keyDown: handleKeyDownEvent(event)
     default: ()
     }
-    return Unmanaged.passUnretained(event)
+    // return nil to consume the event.
+    return nil
 }
 
+/// Start running the keystroke monitor. Note that this means the program will
+/// stay alive and will run forever.
 func startKeystrokeMonitor() {
     let eventMask =
         (1 << CGEventType.keyDown.rawValue) |
