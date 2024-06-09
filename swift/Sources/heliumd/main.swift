@@ -1,18 +1,8 @@
 import Cocoa
 import ObjCWacom
 
-extension NSScreen {
-    /**
-     * Gets the screen that contains the user's cursor.
-     */
-    static func current() -> NSScreen {
-        NSScreen.screens.first { s in NSPointInRect(NSEvent.mouseLocation, s.frame) }!
-    }
-}
-
 var lastFlags: CGEventFlags = .init()
-
-func handleKeyDown() {}
+var lastUsedTablet: Int32 = 0
 
 func isKeyDown(_ type: CGEventType, _ event: CGEvent, _ keyCode: UInt16) -> Bool {
     if type == .keyDown {
@@ -47,6 +37,7 @@ func eventCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent, re
             print("Fullscreen Mode")
         } else {
             print("Precision Mode")
+            setPrecisionMode()
         }
     }
     if keyCode == 0x08, event.flags.contains(.maskControl) {
@@ -70,24 +61,38 @@ guard let eventTap = CGEvent.tapCreate(tap: .cghidEventTap,
 
 func handleProximityEvent(_ event: CGEvent) {
     let isEntering = event.getIntegerValueField(.tabletProximityEventEnterProximity) != 0
+    lastUsedTablet = Int32(event.getIntegerValueField(.tabletProximityEventSystemTabletID))
+
     print(isEntering ? "TABLET ENTER" : "TABLET EXIT")
 }
 
-func runLoop() {
-    let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault,
-                                                      eventTap,
-                                                      0)
-    CFRunLoopAddSource(CFRunLoopGetCurrent(),
-                       runLoopSource,
-                       .commonModes)
-    CGEvent.tapEnable(tap: eventTap, enable: true)
-    CFRunLoopRun()
+/** Make the tablet cover the area around the cursor's current location. */
+func setPrecisionMode() {
+    let frame = NSScreen.current().frame
+    let area = frame.precisionModeFrame(
+        at: NSEvent.mouseLocation,
+        scale: 0.5,
+        aspectRatio: 16 / 10)
+    setTabletMapArea(to: area)
+    // moveOverlay(to: area)
 }
 
-runLoop()
+/** Sends a WacomTabletDriver API call to override tablet map area. */
+func setTabletMapArea(to rect: NSRect) {
+    ObjCWacom.setScreenMapArea(rect, tabletId: lastUsedTablet)
+}
 
-print(NSScreen.current())
-var rect = NSScreen.current().frame
-rect.size.width /= 2
-rect.size.height /= 2
-ObjCWacom.setScreenMapArea(rect, tabletId: 0)
+let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault,
+                                                  eventTap,
+                                                  0)
+CFRunLoopAddSource(CFRunLoopGetCurrent(),
+                   runLoopSource,
+                   .commonModes)
+CGEvent.tapEnable(tap: eventTap, enable: true)
+CFRunLoopRun()
+
+// print(NSScreen.current())
+// var rect = NSScreen.current().frame
+// rect.size.width /= 2
+// rect.size.height /= 2
+// ObjCWacom.setScreenMapArea(rect, tabletId: 0)
